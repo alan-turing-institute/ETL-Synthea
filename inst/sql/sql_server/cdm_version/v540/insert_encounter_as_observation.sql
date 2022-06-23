@@ -1,4 +1,4 @@
-insert into @cdm_schema.observation (
+insert into v3_omop.observation (
 observation_id,
 person_id,
 observation_concept_id,
@@ -21,6 +21,7 @@ value_source_value,
 observation_event_id,
 obs_event_field_concept_id
 )
+
 select row_number()over(order by person_id) observation_id,
 person_id,
 observation_concept_id,
@@ -42,7 +43,6 @@ qualifier_source_value,
 value_source_value,
 observation_event_id,
 obs_event_field_concept_id
-
 from (
 select
 p.person_id                                 person_id,
@@ -65,25 +65,25 @@ cast(null as varchar)                       qualifier_source_value,
 cast(null as varchar)                       value_source_value,
 cast(null as bigint)                        observation_event_id,
 cast(null as int)                           obs_event_field_concept_id
-from @synthea_schema.allergies a
-join @cdm_schema.source_to_standard_vocab_map srctostdvm
+from native.allergies a
+join v3_omop.source_to_standard_vocab_map srctostdvm
   on srctostdvm.source_code             = a.code
  and srctostdvm.target_domain_id        = 'Observation'
  and srctostdvm.target_vocabulary_id    = 'SNOMED'
  and srctostdvm.target_standard_concept = 'S'
  and srctostdvm.target_invalid_reason is null
-join @cdm_schema.source_to_source_vocab_map srctosrcvm
+join v3_omop.source_to_source_vocab_map srctosrcvm
   on srctosrcvm.source_code             = a.code
  and srctosrcvm.source_vocabulary_id    = 'SNOMED'
  and srctosrcvm.source_domain_id        = 'Observation'
-left join @cdm_schema.final_visit_ids fv
+left join v3_omop.final_visit_ids fv
   on fv.encounter_id                    = a.encounter
-left join @synthea_schema.encounters e
+left join native.encounters e
   on a.encounter                        = e.id
  and a.patient                          = e.patient
-left join @cdm_schema.provider pr 
+left join v3_omop.provider pr 
   on e.provider                         = pr.provider_source_value
-join @cdm_schema.person p
+join v3_omop.person p
   on p.person_source_value              = a.patient
 
 union all
@@ -110,25 +110,25 @@ cast(null as varchar)                      value_source_value,
 cast(null as bigint)                       observation_event_id,
 cast(null as int)                          obs_event_field_concept_id
 
-from @synthea_schema.conditions c
-join @cdm_schema.source_to_standard_vocab_map srctostdvm
+from native.conditions c
+join v3_omop.source_to_standard_vocab_map srctostdvm
   on srctostdvm.source_code             = c.code
  and srctostdvm.target_domain_id        = 'Observation'
  and srctostdvm.target_vocabulary_id    = 'SNOMED'
  and srctostdvm.target_standard_concept = 'S'
  and srctostdvm.target_invalid_reason is null
-join @cdm_schema.source_to_source_vocab_map srctosrcvm
+join v3_omop.source_to_source_vocab_map srctosrcvm
   on srctosrcvm.source_code              = c.code
  and srctosrcvm.source_vocabulary_id     = 'SNOMED'
  and srctosrcvm.source_domain_id         = 'Observation'
-left join @cdm_schema.final_visit_ids fv
+left join v3_omop.final_visit_ids fv
   on fv.encounter_id                     = c.encounter
-left join @synthea_schema.encounters e
+left join native.encounters e
   on c.encounter                         = e.id
  and c.patient                           = e.patient
-left join @cdm_schema.provider pr 
+left join v3_omop.provider pr 
   on e.provider                          = pr.provider_source_value
-join @cdm_schema.person p
+join v3_omop.person p
   on p.person_source_value               = c.patient
   
 union all
@@ -155,25 +155,25 @@ cast(null as varchar)                      value_source_value,
 cast(null as bigint)                       observation_event_id,
 cast(null as int)                          obs_event_field_concept_id
 
-from @synthea_schema.observations o
-join @cdm_schema.source_to_standard_vocab_map srctostdvm
+from native.observations o
+join v3_omop.source_to_standard_vocab_map srctostdvm
   on srctostdvm.source_code             = o.code
  and srctostdvm.target_domain_id        = 'Observation'
  and srctostdvm.target_vocabulary_id    = 'LOINC'
  and srctostdvm.target_standard_concept = 'S'
  and srctostdvm.target_invalid_reason is null
-join @cdm_schema.source_to_source_vocab_map srctosrcvm
+join v3_omop.source_to_source_vocab_map srctosrcvm
   on srctosrcvm.source_code              = o.code
  and srctosrcvm.source_vocabulary_id     = 'LOINC'
  and srctosrcvm.source_domain_id         = 'Observation'
-left join @cdm_schema.final_visit_ids fv
+left join v3_omop.final_visit_ids fv
   on fv.encounter_id                     = o.encounter
-left join @synthea_schema.encounters e
+left join native.encounters e
   on o.encounter                         = e.id
  and o.patient                           = e.patient
-left join @cdm_schema.provider pr 
+left join v3_omop.provider pr 
   on e.provider                          = pr.provider_source_value
-join @cdm_schema.person p
+join v3_omop.person p
   on p.person_source_value               = o.patient
 
 union all
@@ -200,25 +200,25 @@ cast(null as varchar)                      value_source_value,
 cast(null as bigint)                       observation_event_id,
 cast(null as int)                          obs_event_field_concept_id
 
-from @synthea_schema.observations o
-join @cdm_schema.source_to_standard_vocab_map srctostdvm
+from native.observations o
+join v3_omop.source_to_standard_vocab_map srctostdvm
   on srctostdvm.source_code             = o.code
  and srctostdvm.target_domain_id        = 'Observation'
  and srctostdvm.target_vocabulary_id    = 'SNOMED'
  and srctostdvm.target_standard_concept = 'S'
  and srctostdvm.target_invalid_reason is null
-join @cdm_schema.source_to_source_vocab_map srctosrcvm
+join v3_omop.source_to_source_vocab_map srctosrcvm
   on srctosrcvm.source_code              = o.code
  and srctosrcvm.source_vocabulary_id     = 'SNOMED'
  and srctosrcvm.source_domain_id         = 'Observation'
-left join @cdm_schema.final_visit_ids fv
+left join v3_omop.final_visit_ids fv
   on fv.encounter_id                     = o.encounter
-left join @synthea_schema.encounters e
+left join native.encounters e
   on o.encounter                         = e.id
  and o.patient                           = e.patient
-left join @cdm_schema.provider pr 
+left join v3_omop.provider pr 
   on e.provider                          = pr.provider_source_value
-join @cdm_schema.person p
+join v3_omop.person p
   on p.person_source_value               = o.patient
 
 union all
@@ -244,23 +244,22 @@ cast(null as varchar)                      qualifier_source_value,
 cast(null as varchar)                      value_source_value,
 cast(null as bigint)                       observation_event_id,
 cast(null as int)                          obs_event_field_concept_id
-from @synthea_schema.encounters encounter
-join @cdm_schema.source_to_standard_vocab_map srctostdvm
+from native.encounters encounter
+join v3_omop.source_to_standard_vocab_map srctostdvm
   on srctostdvm.source_code             = encounter.code
  and srctostdvm.target_domain_id        = 'Observation'
  and srctostdvm.target_vocabulary_id    = 'SNOMED'
  and srctostdvm.target_standard_concept = 'S'
  and srctostdvm.target_invalid_reason is null
-join @cdm_schema.source_to_source_vocab_map srctosrcvm
+join v3_omop.source_to_source_vocab_map srctosrcvm
   on srctosrcvm.source_code              = encounter.code
  and srctosrcvm.source_vocabulary_id     = 'SNOMED'
  and srctosrcvm.source_domain_id         = 'Observation'
  and srctosrcvm.source_concept_class_id  = 'Procedure'
-left join @cdm_schema.final_visit_ids fv
+left join v3_omop.final_visit_ids fv
   on fv.encounter_id                     = encounter.id
-left join @cdm_schema.provider pr 
-  on encounter.provider                  = pr.provider_source_value
-join @cdm_schema.person p
+left join v3_omop.provider pr 
+  on encounter.provider                          = pr.provider_source_value
+join v3_omop.person p
   on p.person_source_value               = encounter.patient
-	
-) tmp;
+	) tmp;
