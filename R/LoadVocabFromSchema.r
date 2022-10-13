@@ -2,8 +2,6 @@
 #'
 #' @description This function populates all Vocabulary tables with data from Vocabulary tables in a specified schema.
 #'
-#' @usage LoadVocabFromSchema(connectionDetails, cdmSourceSchema, cdmTargetSchema)
-#'
 #' @details This function assumes \cr\code{createCDMTables()} has already been run and \cr\code{cdmSourceSchema} has all required Vocabulary tables.
 #'
 #' @param connectionDetails  An R object of type\cr\code{connectionDetails} created using the
@@ -20,17 +18,47 @@
 #'
 #'@export
 
-LoadVocabFromSchema <- function (connectionDetails, cdmSourceSchema, cdmTargetSchema)
-{
+LoadVocabFromSchema <-
+  function(connectionDetails,
+           cdmSourceSchema,
+           cdmTargetSchema)
+  {
+    vocabTableList <-
+      c(
+        "concept",
+        "concept_ancestor",
+        "concept_class",
+        "concept_relationship",
+        "concept_synonym",
+        "domain",
+        "drug_strength",
+        "relationship",
+        "source_to_concept_map",
+        "vocabulary"
+      )
 
-	vocabTableList <- c("concept", "concept_ancestor", "concept_class", "concept_relationship", "concept_synonym", "domain",  "drug_strength", "relationship", "source_to_concept_map", "vocabulary")
+    conn <- DatabaseConnector::connect(connectionDetails)
 
-	conn <- DatabaseConnector::connect(connectionDetails)
-
-	for (tableName in vocabTableList) {
-		sql <- paste0("INSERT INTO ",cdmTargetSchema,".",tableName," SELECT * FROM ",cdmSourceSchema,".",tableName)
-		writeLines(paste0("Copying: ",tableName))
-		DatabaseConnector::executeSql(conn, sql, profile = FALSE, progressBar = TRUE, reportOverallTime = TRUE)
-	}
+    for (tableName in vocabTableList) {
+      sql <-
+        paste0(
+          "INSERT INTO ",
+          cdmTargetSchema,
+          ".",
+          tableName,
+          " SELECT * FROM ",
+          cdmSourceSchema,
+          ".",
+          tableName
+        )
+      writeLines(paste0("Copying: ", tableName))
+      DatabaseConnector::executeSql(
+        conn,
+        sql,
+        profile = FALSE,
+        progressBar = TRUE,
+        reportOverallTime = TRUE
+      )
+    }
     on.exit(DatabaseConnector::disconnect(conn))
-}
+  }

@@ -2,8 +2,6 @@
 #'
 #' @description This function is simply a convenience wrapper for the other calls. (Eunomia support)
 #'
-#' @usage pruneCDM(connectionDetails,cdmSchema,cdmVersion)
-#'
 #' @param connectionDetails  An R object of type\cr\code{connectionDetails} created using the
 #'                                     function \code{createConnectionDetails} in the
 #'                                     \code{DatabaseConnector} package.
@@ -16,16 +14,15 @@
 #'@export
 
 
-pruneCDM <- function (connectionDetails, cdmSchema, cdmVersion) {
+pruneCDM <- function(connectionDetails, cdmSchema, cdmVersion) {
+  writeLines("Getting event data...")
+  eventData <-
+    getEventConceptId(connectionDetails, cdmSchema, cdmVersion)
+  eventConceptId <- eventData$CONCEPT_ID
 
-    writeLines("Getting event data...")
-    eventData <- getEventConceptId(connectionDetails,cdmSchema,cdmVersion)
-    eventConceptId <- eventData$CONCEPT_ID
+  writeLines("Backing up cdm...")
+  backupCDM(connectionDetails, cdmSchema, cdmVersion)
 
-    writeLines("Backing up cdm...")
-    backupCDM(connectionDetails,cdmSchema,cdmVersion)
-
-	writeLines("Pruning cdm...")
-    createPrunedTables(connectionDetails,cdmSchema,eventConceptId)
+  writeLines("Pruning cdm...")
+  createPrunedTables(connectionDetails, cdmSchema, eventConceptId)
 }
-

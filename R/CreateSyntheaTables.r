@@ -2,8 +2,6 @@
 #'
 #' @description This function creates all Synthea tables.
 #'
-#' @usage CreateSyntheaTables(connectionDetails, syntheaSchema, cdmVersion)
-#'
 #' @param connectionDetails  An R object of type\cr\code{connectionDetails} created using the
 #'                                     function \code{createConnectionDetails} in the
 #'                                     \code{DatabaseConnector} package.
@@ -17,23 +15,26 @@
 #'@export
 
 
-CreateSyntheaTables <- function (connectionDetails, syntheaSchema, syntheaVersion = "2.7.0")
-{
 
+CreateSyntheaTables <-
+  function (connectionDetails,
+            syntheaSchema,
+            syntheaVersion = "2.7.0")
+  {
     if (syntheaVersion == "2.7.0")
-        sqlFilePath <- "synthea_version/v270"
+      sqlFilePath <- "synthea_version/v270"
     else if (syntheaVersion == "3.0.0")
-        sqlFilePath <- "synthea_version/v300"
+      sqlFilePath <- "synthea_version/v300"
     else
-        stop("Invalid synthea version specified. Currently \"2.7.0\" and \"3.0.0\" are supported.")
+      stop("Invalid synthea version specified. Currently \"2.7.0\" and \"3.0.0\" are supported.")
 
-    sqlFilename =  paste0(sqlFilePath,"/","create_synthea_tables.sql")
+    sqlFilename <-  paste0(sqlFilePath, "/", "create_synthea_tables.sql")
 
     translatedSql <- SqlRender::loadRenderTranslateSql(
-	      sqlFilename     = sqlFilename,
-	      packageName     = "ETLSyntheaBuilder",
-	      dbms            = connectionDetails$dbms,
-	      synthea_schema  = syntheaSchema
+      sqlFilename     = sqlFilename,
+      packageName     = "ETLSyntheaBuilder",
+      dbms            = connectionDetails$dbms,
+      synthea_schema  = syntheaSchema
     )
 
     writeLines(paste0("Running ", sqlFilename))
@@ -44,4 +45,4 @@ CreateSyntheaTables <- function (connectionDetails, syntheaSchema, syntheaVersio
 
     on.exit(DatabaseConnector::disconnect(conn))
 
-}
+  }

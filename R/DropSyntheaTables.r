@@ -2,8 +2,6 @@
 #'
 #' @description This function drops all Synthea tables.
 #'
-#' @usage DropSyntheaTables(connectionDetails, syntheaSchema)
-#'
 #' @param connectionDetails  An R object of type\cr\code{connectionDetails} created using the
 #'                                     function \code{createConnectionDetails} in the
 #'                                     \code{DatabaseConnector} package.
@@ -16,20 +14,39 @@
 #'@export
 
 
-DropSyntheaTables <- function (connectionDetails, syntheaSchema)
+DropSyntheaTables <- function(connectionDetails, syntheaSchema)
 {
+  syntheaTables <- c(
+    "ALLERGIES",
+    "CAREPLANS",
+    "CONDITIONS",
+    "DEVICES",
+    "ENCOUNTERS",
+    "IMAGING_STUDIES",
+    "IMMUNIZATIONS",
+    "MEDICATIONS",
+    "OBSERVATIONS",
+    "ORGANIZATIONS",
+    "PATIENTS",
+    "PROCEDURES",
+    "PROVIDERS"
+  )
 
-	syntheaTables <- c( 
-		"ALLERGIES","CAREPLANS","CONDITIONS","DEVICES","ENCOUNTERS","IMAGING_STUDIES","IMMUNIZATIONS",
-		"MEDICATIONS","OBSERVATIONS","ORGANIZATIONS","PATIENTS","PROCEDURES","PROVIDERS")
-
-	conn <- DatabaseConnector::connect(connectionDetails) 
-	allTables <- DatabaseConnector::getTableNames(conn,syntheaSchema)
-	writeLines("Dropping Synthea tables...")		
-	tablesToDrop <- allTables[which(allTables %in% syntheaTables)]
-	sql <- paste("drop table @synthea_schema.",tablesToDrop,";",collapse = "\n", sep = "")
-	sql <- SqlRender::render(sql, synthea_schema = syntheaSchema)
-	sql <- SqlRender::translate(sql, targetDialect = connectionDetails$dbms)
-	DatabaseConnector::executeSql(conn, sql)
-	on.exit(DatabaseConnector::disconnect(conn))
+  conn <- DatabaseConnector::connect(connectionDetails)
+  allTables <- DatabaseConnector::getTableNames(conn, syntheaSchema)
+  writeLines("Dropping Synthea tables...")
+  tablesToDrop <- allTables[which(allTables %in% syntheaTables)]
+  sql <-
+    paste(
+      "drop table @synthea_schema.",
+      tablesToDrop,
+      ";",
+      collapse = "\n",
+      sep = ""
+    )
+  sql <- SqlRender::render(sql, synthea_schema = syntheaSchema)
+  sql <-
+    SqlRender::translate(sql, targetDialect = connectionDetails$dbms)
+  DatabaseConnector::executeSql(conn, sql)
+  on.exit(DatabaseConnector::disconnect(conn))
 }
